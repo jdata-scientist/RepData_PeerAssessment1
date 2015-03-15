@@ -119,6 +119,7 @@ library(lubridate)
     				mean = mean(steps),
 						median = median(steps)) 
   mm_day3<- cbind(mm_day, mm_day2)
+  colnames(mm_day3) <- c("date", "mean", "median", "date", "mean with NA = zeroes", "median with NA = zeroes")
   xt2 <- xtable(mm_day3)
   ## Print table with mean and median
   print(xt2, type = "html")

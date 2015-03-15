@@ -79,7 +79,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 18:44:41 2015 -->
+<!-- Sun Mar 15 19:02:01 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -279,15 +279,16 @@ library(lubridate)
     				mean = mean(steps),
 						median = median(steps)) 
   mm_day3<- cbind(mm_day, mm_day2)
+  colnames(mm_day3) <- c("date", "mean", "median", "date", "mean with NA = zeroes", "median with NA = zeroes")
   xt2 <- xtable(mm_day3)
   ## Print table with mean and median
   print(xt2, type = "html")
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 18:44:42 2015 -->
+<!-- Sun Mar 15 19:02:02 2015 -->
 <table border=1>
-<tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
+<tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean with NA = zeroes </th> <th> median with NA = zeroes </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
   <tr> <td align="right"> 2 </td> <td> 2012-10-02 </td> <td align="right"> 0.44 </td> <td align="right"> 0.00 </td> <td> 2012-10-02 </td> <td align="right"> 0.44 </td> <td align="right"> 0.00 </td> </tr>
   <tr> <td align="right"> 3 </td> <td> 2012-10-03 </td> <td align="right"> 39.42 </td> <td align="right"> 0.00 </td> <td> 2012-10-03 </td> <td align="right"> 39.42 </td> <td align="right"> 0.00 </td> </tr>
