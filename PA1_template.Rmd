@@ -12,7 +12,7 @@ library(data.table)
 library(lubridate)
 	
 	## Read activity.csv file
-	activity_data <- read.csv("./activity.csv", header = TRUE)
+	activity_data <- read.csv("./activity.csv", header = TRUE,colClasses = c("numeric", "character", "numeric"))
 
 	## Group data by date
 	group_day<- group_by(activity_data, date)  
@@ -90,6 +90,7 @@ library(lubridate)
 	### Count rows with steps == NA
 	nrow(activity_data[is.na(activity_data$steps),])  
 ```  
+### There were missing values in steps for 2304 rows.  
 ### Fill in missing values with zeroes   
 ```{r fill_in_missing}
   ### Replace missing values with zeroes
@@ -143,20 +144,22 @@ library(lubridate)
 	  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 ```  
 ---
-#### Comparison between missing values and filled in with zero values
+#### Comparison between missing values and filled in with zero values  
+#####   Data with NAs has blue and yellow  
+#####   Data with NAs replaced with zero has yellow and green  
 ```{r plot_comparison}
   par(mfrow = c(2, 2))
   
   e + geom_bar(stat="identity", color= "blue", fill="yellow") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
   
-  e2 + geom_bar(stat="identity", color= "blue", fill="green") + 
+  e2 + geom_bar(stat="identity", color= "pink", fill="green") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 
   f + geom_bar(stat="identity", color= "blue", fill="green") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
   
-  f2 + geom_bar(stat="identity", color= "blue", fill="green") + 
+  f2 + geom_bar(stat="identity", color= "pink", fill="green") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
   
 ```  
@@ -174,17 +177,21 @@ library(lubridate)
 
   ## Add date column
 	ad2[,date2:=as.Date(ad2$date, "%Y-%m-%d")]
-	
-  ## Add weekend indicator column
-	ad2[,weekend_ind:=is.weekend(ad2$date2),]
+
+  ## Add day_type column and initialize it with "weekday"
+  ad2 <-cbind(ad2, c("weekday"))
+  
+  ## Change column names
+  setnames(ad2, c("steps","date","interval","date2","V2"), c( "steps","date","interval","date2","day_type"))
+
+  ## Put "weekend" on day_type for weekend days
+  ad2[is.weekend(ad2$date2),]$day_type="weekend"
 
   ## Group by Weekend indicator and interval and then calculate mean	
-	group_interval2 <-group_by(ad2,  weekend_ind, interval)
+	group_interval2 <-group_by(ad2,  day_type, interval)
 	ave_interval2 <- summarize(group_interval2, ave_steps = mean(steps))
 	
-	### Create a time series plot for average number of steps taken
-	
-	qplot(interval, ave_steps, data = ave_interval2, xlab = "Interval", ylab = "Number of Steps",color = weekend_ind,	geom_smooth(aes(group=1)), type = "l")	
-
+	## Create a time series plot for average number of steps taken with day_type
+ qplot(interval, ave_steps, data = ave_interval2, facets = day_type ~., xlab = "Interval", ylab = "Aveage Steps", geom = (c("point", "line")))
 
 ```

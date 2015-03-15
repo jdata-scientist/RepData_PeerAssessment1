@@ -47,7 +47,7 @@ library(lubridate)
 
 ```r
 	## Read activity.csv file
-	activity_data <- read.csv("./activity.csv", header = TRUE)
+	activity_data <- read.csv("./activity.csv", header = TRUE,colClasses = c("numeric", "character", "numeric"))
 
 	## Group data by date
 	group_day<- group_by(activity_data, date)  
@@ -80,7 +80,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 07:31:47 2015 -->
+<!-- Sun Mar 15 17:18:08 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -241,6 +241,7 @@ library(lubridate)
 ```
 ## [1] 2304
 ```
+### There were missing values in steps in 2304 rows.  
 ### Fill in missing values with zeroes   
 
 ```r
@@ -286,7 +287,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 07:31:49 2015 -->
+<!-- Sun Mar 15 17:18:10 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
@@ -375,7 +376,9 @@ library(lubridate)
 
 ![](PA1_template_files/figure-html/print_median2-1.png) 
 ---
-#### Comparison between missing values and filled in with zero values
+#### Comparison between missing values and filled in with zero values  
+#####   Data with NAs has blue and yellow  
+#####   Data with NAs replaced with zero has yellow and green  
 
 ```r
   par(mfrow = c(2, 2))
@@ -391,7 +394,7 @@ library(lubridate)
 ![](PA1_template_files/figure-html/plot_comparison-1.png) 
 
 ```r
-  e2 + geom_bar(stat="identity", color= "blue", fill="green") + 
+  e2 + geom_bar(stat="identity", color= "pink", fill="green") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 ```
 
@@ -409,7 +412,7 @@ library(lubridate)
 ![](PA1_template_files/figure-html/plot_comparison-3.png) 
 
 ```r
-  f2 + geom_bar(stat="identity", color= "blue", fill="green") + 
+  f2 + geom_bar(stat="identity", color= "pink", fill="green") + 
     theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 ```
 
@@ -458,33 +461,21 @@ library(lubridate)
 ```
 
 ```r
-  ## Add weekend indicator column
-	ad2[,weekend_ind:=is.weekend(ad2$date2),]
-```
+  ## Add day_type column and initialize it with "weekday"
+  ad2 <-cbind(ad2, c("weekday"))
+  
+  ## Change column names
+  setnames(ad2, c("steps","date","interval","date2","V2"), c( "steps","date","interval","date2","day_type"))
 
-```
-##        steps       date interval      date2 weekend_ind
-##     1:     0 2012-10-01        0 2012-10-01       FALSE
-##     2:     0 2012-10-01        5 2012-10-01       FALSE
-##     3:     0 2012-10-01       10 2012-10-01       FALSE
-##     4:     0 2012-10-01       15 2012-10-01       FALSE
-##     5:     0 2012-10-01       20 2012-10-01       FALSE
-##    ---                                                 
-## 17564:     0 2012-11-30     2335 2012-11-30       FALSE
-## 17565:     0 2012-11-30     2340 2012-11-30       FALSE
-## 17566:     0 2012-11-30     2345 2012-11-30       FALSE
-## 17567:     0 2012-11-30     2350 2012-11-30       FALSE
-## 17568:     0 2012-11-30     2355 2012-11-30       FALSE
-```
+  ## Put "weekend" on day_type for weekend days
+  ad2[is.weekend(ad2$date2),]$day_type="weekend"
 
-```r
   ## Group by Weekend indicator and interval and then calculate mean	
-	group_interval2 <-group_by(ad2,  weekend_ind, interval)
+	group_interval2 <-group_by(ad2,  day_type, interval)
 	ave_interval2 <- summarize(group_interval2, ave_steps = mean(steps))
 	
-	### Create a time series plot for average number of steps taken
-	
-	qplot(interval, ave_steps, data = ave_interval2, xlab = "Interval", ylab = "Number of Steps",color = weekend_ind,	geom_smooth(aes(group=1)), type = "l")	
+	## Create a time series plot for average number of steps taken with day_type
+ qplot(interval, ave_steps, data = ave_interval2, facets = day_type ~., xlab = "Interval", ylab = "Aveage Steps", geom = (c("point", "line")))
 ```
 
 ![](PA1_template_files/figure-html/print_weekday_end-1.png) 
