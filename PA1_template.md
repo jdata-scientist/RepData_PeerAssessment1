@@ -79,7 +79,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 17:53:03 2015 -->
+<!-- Sun Mar 15 18:16:44 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -265,9 +265,7 @@ library(lubridate)
   ## Summarize data by day
   sum_day2 <- summarize(group_day2, total_steps = sum(steps, na.rm = TRUE))
   ## Create a histogram with total number of steps taken each day
-  d2 <- ggplot(data=sum_day2, aes(x=date, y=total_steps))
-  d2 + geom_bar(stat="identity", color= "blue", fill="yellow") + 
-	  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+  hist(sum_day2$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day with Zeroes on NAs") 
 ```
 
 ![](PA1_template_files/figure-html/print_total2-1.png) 
@@ -286,7 +284,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 17:53:05 2015 -->
+<!-- Sun Mar 15 18:16:45 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>

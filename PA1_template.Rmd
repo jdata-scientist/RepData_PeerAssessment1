@@ -108,9 +108,7 @@ library(lubridate)
   ## Summarize data by day
   sum_day2 <- summarize(group_day2, total_steps = sum(steps, na.rm = TRUE))
   ## Create a histogram with total number of steps taken each day
-  d2 <- ggplot(data=sum_day2, aes(x=date, y=total_steps))
-  d2 + geom_bar(stat="identity", color= "blue", fill="yellow") + 
-	  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+  hist(sum_day2$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day with Zeroes on NAs") 
 ```  
 ---  
 #### Total Mean and Median per day  with zeroes for missing values
