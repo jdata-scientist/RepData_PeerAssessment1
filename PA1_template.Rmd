@@ -69,6 +69,7 @@ library(lubridate)
 ```  
 
 ### Get Interval with Maximum Average of steps  
+### The highest time interval with the highest nuber of steps across all days was 835.  
 ```{r print_max_ave_steps}
   ### Get maximum average
   max_interval <- summarize(ave_interval, max_interval = max(ave_steps, na.rm = TRUE))

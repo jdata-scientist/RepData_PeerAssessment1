@@ -79,7 +79,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 18:16:44 2015 -->
+<!-- Sun Mar 15 18:44:41 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -191,6 +191,7 @@ library(lubridate)
 ![](PA1_template_files/figure-html/print_ave_by_int-1.png) 
 
 ### Get Interval with Maximum Average of steps  
+### The highest time interval with the highest nuber of steps across all days was 835.  
 
 ```r
   ### Get maximum average
@@ -284,7 +285,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 18:16:45 2015 -->
+<!-- Sun Mar 15 18:44:42 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
