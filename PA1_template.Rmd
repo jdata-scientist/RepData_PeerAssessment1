@@ -22,10 +22,9 @@ library(lubridate)
 ``` {r print_total}
   ## Summarize data by day
   sum_day <- summarize(group_day, total_steps = sum(steps, na.rm = TRUE))
+
   ## Create a histogram with total number of steps taken each day
-  d <- ggplot(data=sum_day, aes(x=date, y=total_steps))
-	d + geom_bar(stat="identity", color= "blue", fill="yellow") + 
-	  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+  hist(sum_day$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day") 
 ```  
 ---  
 ### Total Mean and Median per day

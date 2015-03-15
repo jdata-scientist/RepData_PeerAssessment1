@@ -58,10 +58,9 @@ library(lubridate)
 ```r
   ## Summarize data by day
   sum_day <- summarize(group_day, total_steps = sum(steps, na.rm = TRUE))
+
   ## Create a histogram with total number of steps taken each day
-  d <- ggplot(data=sum_day, aes(x=date, y=total_steps))
-	d + geom_bar(stat="identity", color= "blue", fill="yellow") + 
-	  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+  hist(sum_day$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day") 
 ```
 
 ![](PA1_template_files/figure-html/print_total-1.png) 
@@ -80,7 +79,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 17:18:08 2015 -->
+<!-- Sun Mar 15 17:53:03 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -241,7 +240,7 @@ library(lubridate)
 ```
 ## [1] 2304
 ```
-### There were missing values in steps in 2304 rows.  
+### There were missing values in steps for 2304 rows.  
 ### Fill in missing values with zeroes   
 
 ```r
@@ -287,7 +286,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 17:18:10 2015 -->
+<!-- Sun Mar 15 17:53:05 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
