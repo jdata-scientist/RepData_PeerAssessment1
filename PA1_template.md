@@ -55,47 +55,7 @@ library(lubridate)
   
   ## Assign a new name for the time interval column
   colnames(activity2) <- c("steps", "date", "interval", "time_int")
-  class(activity2$time_int)
-```
 
-```
-## [1] "POSIXct" "POSIXt"
-```
-
-```r
-  head(activity2, n=25)
-```
-
-```
-##    steps       date interval            time_int
-## 1     NA 2012-10-01        0 2015-03-16 00:00:00
-## 2     NA 2012-10-01        5 2015-03-16 00:05:00
-## 3     NA 2012-10-01       10 2015-03-16 00:10:00
-## 4     NA 2012-10-01       15 2015-03-16 00:15:00
-## 5     NA 2012-10-01       20 2015-03-16 00:20:00
-## 6     NA 2012-10-01       25 2015-03-16 00:25:00
-## 7     NA 2012-10-01       30 2015-03-16 00:30:00
-## 8     NA 2012-10-01       35 2015-03-16 00:35:00
-## 9     NA 2012-10-01       40 2015-03-16 00:40:00
-## 10    NA 2012-10-01       45 2015-03-16 00:45:00
-## 11    NA 2012-10-01       50 2015-03-16 00:50:00
-## 12    NA 2012-10-01       55 2015-03-16 00:55:00
-## 13    NA 2012-10-01      100 2015-03-16 01:40:00
-## 14    NA 2012-10-01      105 2015-03-16 01:45:00
-## 15    NA 2012-10-01      110 2015-03-16 01:50:00
-## 16    NA 2012-10-01      115 2015-03-16 01:55:00
-## 17    NA 2012-10-01      120 2015-03-16 02:00:00
-## 18    NA 2012-10-01      125 2015-03-16 02:05:00
-## 19    NA 2012-10-01      130 2015-03-16 02:10:00
-## 20    NA 2012-10-01      135 2015-03-16 02:15:00
-## 21    NA 2012-10-01      140 2015-03-16 02:20:00
-## 22    NA 2012-10-01      145 2015-03-16 02:25:00
-## 23    NA 2012-10-01      150 2015-03-16 02:30:00
-## 24    NA 2012-10-01      155 2015-03-16 02:35:00
-## 25    NA 2012-10-01      200 2015-03-16 03:20:00
-```
-
-```r
 	## Group data by date
 	group_day<- group_by(activity2, date)  
 ```
@@ -126,7 +86,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Mon Mar 16 00:56:14 2015 -->
+<!-- Mon Mar 16 01:13:53 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -210,7 +170,7 @@ library(lubridate)
 ### Total Median per day  
 
 ```r
-## Create a graph for Median Total Steps
+  ## Create a graph for Median Total Steps
   f <- ggplot(data=mm_day, aes(x=date, y=median))
 	
 	f + geom_bar(stat="identity", color= "blue", fill="yellow") + 
@@ -227,9 +187,14 @@ library(lubridate)
 ### Average by interval  
 
 ```r
-## Group data by interval
+  ## Group data by time interval
   group_interval <-group_by(activity2, time_int)
 	ave_interval <- summarize(group_interval, ave_steps = mean(steps, na.rm = TRUE))
+
+  ## Group data by 5-min interval
+  group5_interval <-group_by(activity2, interval)
+  ave5_interval <- summarize(group5_interval, ave_steps = mean(steps, na.rm = TRUE))
+
 	
 	### Create a time series plot for average number of steps taken
 	plot(ave_interval$time_int, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
@@ -242,22 +207,22 @@ library(lubridate)
 
 ```r
   ### Get maximum average
-  max_interval <- summarize(ave_interval, max_interval = max(ave_steps, na.rm = TRUE))
+  max_interval <- summarize(ave5_interval, max_interval = max(ave_steps, na.rm = TRUE))
 	
 	### Get the interval with the maximum average and print it
-  print("Interval with highest aveerage maximum of steps")
+  print("5-min Interval with highest aveerage maximum of steps")
 ```
 
 ```
-## [1] "Interval with highest aveerage maximum of steps"
+## [1] "5-min Interval with highest aveerage maximum of steps"
 ```
 
 ```r
-  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$time_int  
+  ave5_interval[ave5_interval$ave_steps == as.numeric(max_interval),]$interval  
 ```
 
 ```
-## [1] "2015-03-16 13:55:00 EDT"
+## [1] 835
 ```
 ## Imputing missing values   
 ### Count number of rows with missing values   
@@ -314,6 +279,7 @@ library(lubridate)
 
   ## Summarize data by day
   sum_day2 <- summarize(group_day2, total_steps = sum(steps, na.rm = TRUE))
+
   ## Create a histogram with total number of steps taken each day
   hist(sum_day2$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day with Zeroes on NAs") 
 ```
@@ -335,7 +301,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Mon Mar 16 00:56:15 2015 -->
+<!-- Mon Mar 16 01:13:54 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean with NA = zeroes </th> <th> median with NA = zeroes </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
@@ -415,7 +381,7 @@ library(lubridate)
 #### Total Median per day with zeroes for missing values  
 
 ```r
-## Create a graph for Median Total Steps
+  ## Create a graph for Median Total Steps
   f2 <- ggplot(data=mm_day2, aes(x=date, y=median))
 	
 	f2 + geom_bar(stat="identity", color= "blue", fill="yellow") + 
@@ -485,8 +451,6 @@ library(lubridate)
 
 ```r
   ## Copy original data and replace nulls with zeroes
-	##activity_data2 <- activity_data
-  ##activity_data2[is.na(activity_data2$steps),]$steps<- 0
 	ad2 <- as.data.table(activity2)
   ad2[is.na(ad2$steps),]$steps <- 0
 

@@ -20,9 +20,6 @@ library(lubridate)
   
   ## Assign a new name for the time interval column
   colnames(activity2) <- c("steps", "date", "interval", "time_int")
-  class(activity2$time_int)
-  head(activity2, n=25)
-  
 
 	## Group data by date
 	group_day<- group_by(activity2, date)  
@@ -60,7 +57,7 @@ library(lubridate)
 ---  
 ### Total Median per day  
 ```{r print_median}
-## Create a graph for Median Total Steps
+  ## Create a graph for Median Total Steps
   f <- ggplot(data=mm_day, aes(x=date, y=median))
 	
 	f + geom_bar(stat="identity", color= "blue", fill="yellow") + 
@@ -70,9 +67,14 @@ library(lubridate)
 ## What is the average daily activity pattern?
 ### Average by interval  
 ```{r print_ave_by_int}
-## Group data by interval
+  ## Group data by time interval
   group_interval <-group_by(activity2, time_int)
 	ave_interval <- summarize(group_interval, ave_steps = mean(steps, na.rm = TRUE))
+
+  ## Group data by 5-min interval
+  group5_interval <-group_by(activity2, interval)
+  ave5_interval <- summarize(group5_interval, ave_steps = mean(steps, na.rm = TRUE))
+
 	
 	### Create a time series plot for average number of steps taken
 	plot(ave_interval$time_int, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
@@ -82,11 +84,11 @@ library(lubridate)
 ### The highest time interval with the highest nuber of steps across all days was 835.  
 ```{r print_max_ave_steps}
   ### Get maximum average
-  max_interval <- summarize(ave_interval, max_interval = max(ave_steps, na.rm = TRUE))
+  max_interval <- summarize(ave5_interval, max_interval = max(ave_steps, na.rm = TRUE))
 	
 	### Get the interval with the maximum average and print it
-  print("Interval with highest aveerage maximum of steps")
-  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$time_int  
+  print("5-min Interval with highest aveerage maximum of steps")
+  ave5_interval[ave5_interval$ave_steps == as.numeric(max_interval),]$interval  
 ```  
 ## Imputing missing values   
 ### Count number of rows with missing values   
@@ -121,6 +123,7 @@ library(lubridate)
 
   ## Summarize data by day
   sum_day2 <- summarize(group_day2, total_steps = sum(steps, na.rm = TRUE))
+
   ## Create a histogram with total number of steps taken each day
   hist(sum_day2$total_steps, xlab = "Total Steps", main = "Histogram of Total Steps Taken Each Day with Zeroes on NAs") 
 ```  
@@ -149,7 +152,7 @@ library(lubridate)
 ---  
 #### Total Median per day with zeroes for missing values  
 ```{r print_median2}
-## Create a graph for Median Total Steps
+  ## Create a graph for Median Total Steps
   f2 <- ggplot(data=mm_day2, aes(x=date, y=median))
 	
 	f2 + geom_bar(stat="identity", color= "blue", fill="yellow") + 
@@ -183,8 +186,6 @@ library(lubridate)
   library(chron)
 	
   ## Copy original data and replace nulls with zeroes
-	##activity_data2 <- activity_data
-  ##activity_data2[is.na(activity_data2$steps),]$steps<- 0
 	ad2 <- as.data.table(activity2)
   ad2[is.na(ad2$steps),]$steps <- 0
 
