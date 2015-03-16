@@ -14,8 +14,18 @@ library(lubridate)
 	## Read activity.csv file
 	activity_data <- read.csv("./activity.csv", header = TRUE,colClasses = c("numeric", "character", "numeric"))
 
+  ## Convert interval to time format
+  activity2 <- cbind(activity_data,                
+    as.POSIXct(strptime(paste((activity_data$interval %/% 60) %% 24, ":",activity_data$interval %% 60, sep=""), "%H:%M")))
+  
+  ## Assign a new name for the time interval column
+  colnames(activity2) <- c("steps", "date", "interval", "time_int")
+  class(activity2$time_int)
+  head(activity2, n=25)
+  
+
 	## Group data by date
-	group_day<- group_by(activity_data, date)  
+	group_day<- group_by(activity2, date)  
 ```
 ## What is mean total number of steps taken per day?  
 ### Total per day   
@@ -61,11 +71,11 @@ library(lubridate)
 ### Average by interval  
 ```{r print_ave_by_int}
 ## Group data by interval
-  group_interval <-group_by(activity_data, interval)
+  group_interval <-group_by(activity2, time_int)
 	ave_interval <- summarize(group_interval, ave_steps = mean(steps, na.rm = TRUE))
 	
 	### Create a time series plot for average number of steps taken
-	plot(ave_interval$interval, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
+	plot(ave_interval$time_int, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
 ```  
 
 ### Get Interval with Maximum Average of steps  
@@ -76,7 +86,7 @@ library(lubridate)
 	
 	### Get the interval with the maximum average and print it
   print("Interval with highest aveerage maximum of steps")
-  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$interval  
+  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$time_int  
 ```  
 ## Imputing missing values   
 ### Count number of rows with missing values   
@@ -93,8 +103,11 @@ library(lubridate)
 ### There were missing values in steps for 2304 rows.  
 ### Fill in missing values with zeroes   
 ```{r fill_in_missing}
+  
+  ## Make another copy of the data
+  activity_data2 <- activity2
+  
   ### Replace missing values with zeroes
-  activity_data2 <- activity_data
   activity_data2[is.na(activity_data2$steps),]$steps<- 0
 
   ### Count rows with steps == NA
@@ -170,9 +183,10 @@ library(lubridate)
   library(chron)
 	
   ## Copy original data and replace nulls with zeroes
-	activity_data2 <- activity_data
-  activity_data2[is.na(activity_data2$steps),]$steps<- 0
-	ad2 <- as.data.table(activity_data2)
+	##activity_data2 <- activity_data
+  ##activity_data2[is.na(activity_data2$steps),]$steps<- 0
+	ad2 <- as.data.table(activity2)
+  ad2[is.na(ad2$steps),]$steps <- 0
 
   ## Add date column
 	ad2[,date2:=as.Date(ad2$date, "%Y-%m-%d")]
@@ -181,7 +195,7 @@ library(lubridate)
   ad2 <-cbind(ad2, c("weekday"))
   
   ## Change column names
-  setnames(ad2, c("steps","date","interval","date2","V2"), c( "steps","date","interval","date2","day_type"))
+  setnames(ad2, c("steps","date","interval", "time_int","date2","V2"), c( "steps","date","interval", "time_int","date2","day_type"))
 
   ## Put "weekend" on day_type for weekend days
   ad2[is.weekend(ad2$date2),]$day_type="weekend"

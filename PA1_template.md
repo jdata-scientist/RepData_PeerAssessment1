@@ -49,8 +49,55 @@ library(lubridate)
 	## Read activity.csv file
 	activity_data <- read.csv("./activity.csv", header = TRUE,colClasses = c("numeric", "character", "numeric"))
 
+  ## Convert interval to time format
+  activity2 <- cbind(activity_data,                
+    as.POSIXct(strptime(paste((activity_data$interval %/% 60) %% 24, ":",activity_data$interval %% 60, sep=""), "%H:%M")))
+  
+  ## Assign a new name for the time interval column
+  colnames(activity2) <- c("steps", "date", "interval", "time_int")
+  class(activity2$time_int)
+```
+
+```
+## [1] "POSIXct" "POSIXt"
+```
+
+```r
+  head(activity2, n=25)
+```
+
+```
+##    steps       date interval            time_int
+## 1     NA 2012-10-01        0 2015-03-16 00:00:00
+## 2     NA 2012-10-01        5 2015-03-16 00:05:00
+## 3     NA 2012-10-01       10 2015-03-16 00:10:00
+## 4     NA 2012-10-01       15 2015-03-16 00:15:00
+## 5     NA 2012-10-01       20 2015-03-16 00:20:00
+## 6     NA 2012-10-01       25 2015-03-16 00:25:00
+## 7     NA 2012-10-01       30 2015-03-16 00:30:00
+## 8     NA 2012-10-01       35 2015-03-16 00:35:00
+## 9     NA 2012-10-01       40 2015-03-16 00:40:00
+## 10    NA 2012-10-01       45 2015-03-16 00:45:00
+## 11    NA 2012-10-01       50 2015-03-16 00:50:00
+## 12    NA 2012-10-01       55 2015-03-16 00:55:00
+## 13    NA 2012-10-01      100 2015-03-16 01:40:00
+## 14    NA 2012-10-01      105 2015-03-16 01:45:00
+## 15    NA 2012-10-01      110 2015-03-16 01:50:00
+## 16    NA 2012-10-01      115 2015-03-16 01:55:00
+## 17    NA 2012-10-01      120 2015-03-16 02:00:00
+## 18    NA 2012-10-01      125 2015-03-16 02:05:00
+## 19    NA 2012-10-01      130 2015-03-16 02:10:00
+## 20    NA 2012-10-01      135 2015-03-16 02:15:00
+## 21    NA 2012-10-01      140 2015-03-16 02:20:00
+## 22    NA 2012-10-01      145 2015-03-16 02:25:00
+## 23    NA 2012-10-01      150 2015-03-16 02:30:00
+## 24    NA 2012-10-01      155 2015-03-16 02:35:00
+## 25    NA 2012-10-01      200 2015-03-16 03:20:00
+```
+
+```r
 	## Group data by date
-	group_day<- group_by(activity_data, date)  
+	group_day<- group_by(activity2, date)  
 ```
 ## What is mean total number of steps taken per day?  
 ### Total per day   
@@ -79,7 +126,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 19:02:01 2015 -->
+<!-- Mon Mar 16 00:56:14 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> </tr>
@@ -181,11 +228,11 @@ library(lubridate)
 
 ```r
 ## Group data by interval
-  group_interval <-group_by(activity_data, interval)
+  group_interval <-group_by(activity2, time_int)
 	ave_interval <- summarize(group_interval, ave_steps = mean(steps, na.rm = TRUE))
 	
 	### Create a time series plot for average number of steps taken
-	plot(ave_interval$interval, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
+	plot(ave_interval$time_int, ave_interval$ave_steps, xlab = "Interval", ylab = "Average Steps Taken", type = "l")
 ```
 
 ![](PA1_template_files/figure-html/print_ave_by_int-1.png) 
@@ -206,11 +253,11 @@ library(lubridate)
 ```
 
 ```r
-  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$interval  
+  ave_interval[ave_interval$ave_steps == as.numeric(max_interval),]$time_int  
 ```
 
 ```
-## [1] 835
+## [1] "2015-03-16 13:55:00 EDT"
 ```
 ## Imputing missing values   
 ### Count number of rows with missing values   
@@ -245,8 +292,10 @@ library(lubridate)
 ### Fill in missing values with zeroes   
 
 ```r
+  ## Make another copy of the data
+  activity_data2 <- activity2
+  
   ### Replace missing values with zeroes
-  activity_data2 <- activity_data
   activity_data2[is.na(activity_data2$steps),]$steps<- 0
 
   ### Count rows with steps == NA
@@ -286,7 +335,7 @@ library(lubridate)
 ```
 
 <!-- html table generated in R 3.1.3 by xtable 1.7-4 package -->
-<!-- Sun Mar 15 19:02:02 2015 -->
+<!-- Mon Mar 16 00:56:15 2015 -->
 <table border=1>
 <tr> <th>  </th> <th> date </th> <th> mean </th> <th> median </th> <th> date </th> <th> mean with NA = zeroes </th> <th> median with NA = zeroes </th>  </tr>
   <tr> <td align="right"> 1 </td> <td> 2012-10-01 </td> <td align="right">  </td> <td align="right">  </td> <td> 2012-10-01 </td> <td align="right"> 0.00 </td> <td align="right"> 0.00 </td> </tr>
@@ -436,27 +485,28 @@ library(lubridate)
 
 ```r
   ## Copy original data and replace nulls with zeroes
-	activity_data2 <- activity_data
-  activity_data2[is.na(activity_data2$steps),]$steps<- 0
-	ad2 <- as.data.table(activity_data2)
+	##activity_data2 <- activity_data
+  ##activity_data2[is.na(activity_data2$steps),]$steps<- 0
+	ad2 <- as.data.table(activity2)
+  ad2[is.na(ad2$steps),]$steps <- 0
 
   ## Add date column
 	ad2[,date2:=as.Date(ad2$date, "%Y-%m-%d")]
 ```
 
 ```
-##        steps       date interval      date2
-##     1:     0 2012-10-01        0 2012-10-01
-##     2:     0 2012-10-01        5 2012-10-01
-##     3:     0 2012-10-01       10 2012-10-01
-##     4:     0 2012-10-01       15 2012-10-01
-##     5:     0 2012-10-01       20 2012-10-01
-##    ---                                     
-## 17564:     0 2012-11-30     2335 2012-11-30
-## 17565:     0 2012-11-30     2340 2012-11-30
-## 17566:     0 2012-11-30     2345 2012-11-30
-## 17567:     0 2012-11-30     2350 2012-11-30
-## 17568:     0 2012-11-30     2355 2012-11-30
+##        steps       date interval            time_int      date2
+##     1:     0 2012-10-01        0 2015-03-16 00:00:00 2012-10-01
+##     2:     0 2012-10-01        5 2015-03-16 00:05:00 2012-10-01
+##     3:     0 2012-10-01       10 2015-03-16 00:10:00 2012-10-01
+##     4:     0 2012-10-01       15 2015-03-16 00:15:00 2012-10-01
+##     5:     0 2012-10-01       20 2015-03-16 00:20:00 2012-10-01
+##    ---                                                         
+## 17564:     0 2012-11-30     2335 2015-03-16 14:55:00 2012-11-30
+## 17565:     0 2012-11-30     2340 2015-03-16 15:00:00 2012-11-30
+## 17566:     0 2012-11-30     2345 2015-03-16 15:05:00 2012-11-30
+## 17567:     0 2012-11-30     2350 2015-03-16 15:10:00 2012-11-30
+## 17568:     0 2012-11-30     2355 2015-03-16 15:15:00 2012-11-30
 ```
 
 ```r
@@ -464,7 +514,7 @@ library(lubridate)
   ad2 <-cbind(ad2, c("weekday"))
   
   ## Change column names
-  setnames(ad2, c("steps","date","interval","date2","V2"), c( "steps","date","interval","date2","day_type"))
+  setnames(ad2, c("steps","date","interval", "time_int","date2","V2"), c( "steps","date","interval", "time_int","date2","day_type"))
 
   ## Put "weekend" on day_type for weekend days
   ad2[is.weekend(ad2$date2),]$day_type="weekend"
